@@ -4,7 +4,7 @@ import sys
 sys.path.append('/ecg_feature_extraction')
 from ecg_feature_extraction.ecg_taxonomy import temporal_ecg_features, taxonomy
 from ecg_feature_extraction.fiducial_point_detection import ecg_delineation, vector_fiducial
-from anomaly_detection_functions.Functions.AnomalyDetection_ECG import anomalydetection_ecg
+from Humath.Functions.AnomalyDetection_ECG import anomalydetection_ecg
 
 
 def main(signal, fs):
