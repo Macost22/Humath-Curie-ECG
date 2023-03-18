@@ -51,10 +51,13 @@ def validar_taxonomia(ecg,t_start,t_end):
     print('SEÑAL ELECTROCARDIOGRÁFICA ANALIZADA')
     print('-'*60)
     plot_original_ecg(ecg,t_start,t_end,fs)
+    plt.show()
     print('-'*60)
-    plot_ecg_fiducial_points(fiducial['neurokit2'], t_start,t_end,fs,'Puntos fiduciales con algoritmo R')
+    plot_ecg_fiducial_points(fiducial['algoritmo R'], t_start,t_end,fs,'Puntos fiduciales con algoritmo R')
+    plt.show()
     print('-'*60)
-    plot_ecg_fiducial_points(fiducial['neurokit2'], t_start,t_end,fs,'Puntos fiduciales con algoritmo R')
+    plot_ecg_fiducial_points(fiducial['neurokit2'], t_start,t_end,fs,'Puntos fiduciales con neurokit2')
+    plt.show()
 
 
 
