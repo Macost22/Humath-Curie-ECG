@@ -3,6 +3,7 @@ import numpy as np
 import sys
 from ecg_feature_extraction.ecg_taxonomy import taxonomy, temporal_ecg_features
 from ecg_feature_extraction.fiducial_point_detection import ecg_delineation, vector_fiducial
+from ecg_feature_extraction.visualization_ecg import plot_original_ecg,plot_ecg_fiducial_points
 sys.path.append('Humath/Functions')
 from Humath.Functions.AnomalyDetection_ECG import anomalydetection_ecg
 
@@ -45,8 +46,15 @@ def validar_taxonomia(ecg):
     else:
         print('más del 70% de la señal es corrupta')
 
-def main_validacion(id,t_start, t_end):
-    df = pd.read_json('ecg_ii_arrhythmia.json')
+    plot_signals(ecg,fiducial)
+
+
+def plot_signals(ecg,fiducial):
+    t_start, t_end = 15,20
+    plot_original_ecg(ecg,t_start,t_end,250)
+    plot_ecg_fiducial_points(fiducial['neurokit2'], t_start,t_end,250,'Puntos fiduciales con algoritmo R')
+
+def main_validacion(id,t_start, t_end,df):
     ecg = df.loc[id,'ECG_II']
     y = df.loc[id,'Arrhythmia']
     ecg= np.array(ecg,dtype=float).reshape((len(ecg[0])))
@@ -64,6 +72,9 @@ def main_validacion(id,t_start, t_end):
     validar_taxonomia(ecg)
 
 
+
+
 if __name__ == '__main__':
-    main_validacion(2,0,5)
+    df = pd.read_json('ecg_ii_arrhythmia.json')
+    main_validacion(2,0,5,df)
 
