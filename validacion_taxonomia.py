@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import sys
+import matplotlib.pyplot as plt
 from ecg_feature_extraction.ecg_taxonomy import taxonomy, temporal_ecg_features
 from ecg_feature_extraction.fiducial_point_detection import ecg_delineation, vector_fiducial
 from ecg_feature_extraction.visualization_ecg import plot_original_ecg,plot_ecg_fiducial_points
@@ -28,7 +29,7 @@ def tipo_arritmia_mimic(id,y):
     else:
         print(f'El paciente {id} Segun la MIMIC presenta {list(Arrhythmia.keys())[list(Arrhythmia.values()).index(int(y))]}\n')
 
-def validar_taxonomia(ecg):
+def validar_taxonomia(ecg,t_start,t_end):
     fs=250
     tvent = 0.8 # duración de la ventana en segundos
     t = np.linspace(0,20,fs*20)
@@ -46,13 +47,20 @@ def validar_taxonomia(ecg):
     else:
         print('más del 70% de la señal es corrupta')
 
-    plot_signals(ecg,fiducial)
+    print('='*60)
+    print('SEÑAL ELECTROCARDIOGRÁFICA ANALIZADA')
+    print('-'*60)
+    plot_original_ecg(ecg,t_start,t_end,fs)
+    print('-'*60)
+    plot_ecg_fiducial_points(fiducial['neurokit2'], t_start,t_end,fs,'Puntos fiduciales con algoritmo R')
+    print('-'*60)
+    plot_ecg_fiducial_points(fiducial['neurokit2'], t_start,t_end,fs,'Puntos fiduciales con algoritmo R')
 
 
-def plot_signals(ecg,fiducial):
-    t_start, t_end = 15,20
-    plot_original_ecg(ecg,t_start,t_end,250)
-    plot_ecg_fiducial_points(fiducial['neurokit2'], t_start,t_end,250,'Puntos fiduciales con algoritmo R')
+
+
+
+
 
 def main_validacion(id,t_start, t_end,df):
     ecg = df.loc[id,'ECG_II']
@@ -69,7 +77,9 @@ def main_validacion(id,t_start, t_end,df):
     print('='*60)
     print('TAXONOMIA PARA IDENTIFICAR TIPOS DE ARRITMIAS')
     print('-'*60)
-    validar_taxonomia(ecg)
+    validar_taxonomia(ecg,t_start,t_end)
+
+
 
 
 
