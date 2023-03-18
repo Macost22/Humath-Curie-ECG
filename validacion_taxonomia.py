@@ -44,24 +44,33 @@ def validar_taxonomia(ecg,t_start,t_end):
         print('-'*60)
         print('\nTaxonomia con los puntos fiduciales encontrados en R:\n')
         taxonomy(fiducial['algoritmo R'],ecg,fs)
+
+        print('\n')
+        print('='*60)
+        print('SEÑAL ELECTROCARDIOGRÁFICA ANALIZADA')
+        print('-'*60)
+        print('\nSeñal de ECG original')
+        plot_original_ecg(ecg,t_start,t_end,fs)
+        plt.show()
+        print('-'*60)
+        print('\nSeñal de ECG con los puntos fiduciales encontrados con  neurokit2')
+        plot_ecg_fiducial_points(fiducial['neurokit2'], t_start,t_end,fs,'Puntos fiduciales con neurokit2')
+        plt.show()
+        print('-'*60)
+        print('\nSeñal de ECG con los puntos fiduciales encontrados con R')
+        plot_ecg_fiducial_points(fiducial['algoritmo R'], t_start,t_end,fs,'Puntos fiduciales con algoritmo R')
+        plt.show()
+
     else:
         print('más del 70% de la señal es corrupta')
+        print('\n')
+        print('='*60)
+        print('SEÑAL ELECTROCARDIOGRÁFICA ANALIZADA')
+        print('-'*60)
+        print('\nSeñal de ECG original')
+        plot_original_ecg(ecg,t_start,t_end,fs)
+        plt.show()
 
-    print('\n')
-    print('='*60)
-    print('SEÑAL ELECTROCARDIOGRÁFICA ANALIZADA')
-    print('-'*60)
-    print('\nSeñal de ECG original')
-    plot_original_ecg(ecg,t_start,t_end,fs)
-    plt.show()
-    print('-'*60)
-    print('\nSeñal de ECG con los puntos fiduciales encontrados con  neurokit2')
-    plot_ecg_fiducial_points(fiducial['neurokit2'], t_start,t_end,fs,'Puntos fiduciales con neurokit2')
-    plt.show()
-    print('-'*60)
-    print('\nSeñal de ECG con los puntos fiduciales encontrados con R')
-    plot_ecg_fiducial_points(fiducial['algoritmo R'], t_start,t_end,fs,'Puntos fiduciales con algoritmo R')
-    plt.show()
 
 
 
@@ -94,5 +103,5 @@ def main_validacion(id,t_start, t_end,df):
 
 if __name__ == '__main__':
     df = pd.read_json('ecg_ii_arrhythmia.json')
-    main_validacion(2,0,5,df)
+    main_validacion(30,0,5,df)
 
