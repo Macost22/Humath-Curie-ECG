@@ -7,7 +7,11 @@ Created on Tue Jan 17 19:25:41 2023
 
 import numpy as np
 from collections import defaultdict
-
+from fiducial_point_detection import ecg_delineation
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib;
+matplotlib.use('Qt5Agg')
 
 # funcion para normalizar el tiempo, donde se obtiene el max, min y el tiempo normalizado
 def normalizar(lista):  
@@ -80,7 +84,6 @@ def normalized_fiducial2(Paciente, fs):
         ----------
         Paciente:dict
                   diccionario con los puntos fiduciales del paciente a analizar
-        ecg: dataframe (68,240000)
         fs: frecuencia de muestreo
                 
         Return
@@ -142,17 +145,19 @@ def normalized_fiducial2(Paciente, fs):
         T_data.append(Tn)
         T2_data.append(T2n)
         J_data.append(Jn)
-        
-        # plt.plot(t,ecg)
-        # plt.scatter(P1n, Paciente['ECG'][P1],c='red')
-        # plt.scatter(Pn, Paciente['ECG'][P],c='blue')
-        # plt.scatter(P2n, Paciente['ECG'][P2],c='cyan')
-        # plt.scatter(Qn, Paciente['ECG'][Q],c='orange')
-        # plt.scatter(Rn, Paciente['ECG'][R],c='yellow')
-        # plt.scatter(Sn, Paciente['ECG'][S],c='green')
-        # plt.scatter(T1n, Paciente['ECG'][T1],c='gray')
-        # plt.scatter(Tn, Paciente['ECG'][T],c='pink')
-        # plt.scatter(T2n, Paciente['ECG'][T2],c='purple')
+
+        """
+        plt.plot(t,ecg)
+        plt.scatter(P1n, Paciente['ECG'][P1],c='red')
+        plt.scatter(Pn, Paciente['ECG'][P],c='blue')
+        plt.scatter(P2n, Paciente['ECG'][P2],c='cyan')
+        plt.scatter(Qn, Paciente['ECG'][Q],c='orange')
+        plt.scatter(Rn, Paciente['ECG'][R],c='yellow')
+        plt.scatter(Sn, Paciente['ECG'][S],c='green')
+        plt.scatter(T1n, Paciente['ECG'][T1],c='gray')
+        plt.scatter(Tn, Paciente['ECG'][T],c='pink')
+        plt.scatter(T2n, Paciente['ECG'][T2],c='purple')
+        """
         
         normalized_data = {'ECG_P_Onsets':np.array(P1_data), 'ECG_P_Peaks':np.array(P_data), 'ECG_P_Offsets':np.array(P2_data),
                          'ECG_Q_Peaks':np.array(Q_data), 'ECG_R_Peaks':np.array(R_data),'ECG_S_Peaks':np.array(S_data), 
@@ -182,15 +187,30 @@ def flatten_values(fiducial_list):
 
 if __name__ == '__main__':
 
-    path='C:/Users/melis/Desktop/Bioseñales/ECG_veronica/ecg_70.txt'
-    #path = 'C:/Users/melis/Desktop/Bioseñales/MIMIC/MIMIC_arritmia.txt'
-    ecg_70 = pd.read_csv(path, sep=" ")
-    # Se transponen los datos  (68,240000) = (individuo, observaciones)
-    ecg_70 = ecg_70.transpose()
-    # Se modifican los índices para que sean de 0 a 67
-    ecg_70.index = list(range(len(ecg_70)))
-    ecg1=ecg_70.iloc[0]
-    fs_signal = 2000
 
-    from fiducial_point_detection import ecg_delineation
-    fiducial_points_R, fiducial_points_nk = ecg_delineation(signal=ecg1, fs=fs_signal)
+    path = 'D:/Humath-Curie-General/Humath-Curie-ECG/ecg_ii_arrhythmia.json'
+    signals = pd.read_json(path)
+
+    # un solo caso
+    signal1=signals.loc[1,'ECG_II'][0]
+    fiducial_points_R1, fiducial_points_nk1,signal_filtered1 = ecg_delineation(signal=signal1, fs=250)
+    nd1=normalized_fiducial2(fiducial_points_R1,250)
+
+    # todas las señales
+
+    fiducial_n_list=[]
+    for person in range(len(signals)):
+        try:
+            signal_person=signals.loc[person,'ECG_II'][0]
+            fiducial_points_R, fiducial_points_nk,signal_filtered = ecg_delineation(signal=signal_person, fs=250)
+            fiducial_points_n = normalized_fiducial2(fiducial_points_R,250)
+
+            fiducial_n_list.append(fiducial_points_n)
+            print(person)
+        except:
+            continue
+
+    flattened_fiducial_n=flattened_fp= flatten_values(fiducial_n_list)
+    flattened_dic=dict(flattened_fiducial_n)
+    df_flattened = pd.DataFrame(flattened_dic)
+    df_flattened.to_csv('fiducial_normalized_arritmias.txt')
