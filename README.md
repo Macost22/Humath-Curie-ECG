@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Algoritmos para la detección de arritmias en señakes de elctrocardiografía.
 
 Los datos son extraídos de la base de datos MIMIC, donde podemos ver lo siguiente:
@@ -9,3 +10,8 @@ Los datos son extraídos de la base de datos MIMIC, donde podemos ver lo siguien
   - 3: Aleteo ventricular
   - 4: Taquicardia ventricular
   - 5 : Asistolia
+=======
+# Humath-Curie-ECG
+
+Algoritmo para la detección de arritmias en señales de electrocardiograma
+>>>>>>> origin/main
