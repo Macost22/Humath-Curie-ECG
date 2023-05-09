@@ -91,7 +91,8 @@ def normalized_fiducial2(Paciente, fs):
         P1_data, P_data, P2_data, Q_data, R_data, S_data, T1_data, T_data, T2_data: list
                    puntos fiduciales normalizados
                 
-    """ 
+    """
+    normalized_data=dict()
     P1_data=[]
     P_data=[]
     P2_data=[]
@@ -188,29 +189,36 @@ def flatten_values(fiducial_list):
 if __name__ == '__main__':
 
 
-    path = 'D:/Humath-Curie-General/Humath-Curie-ECG/ecg_ii_arrhythmia.json'
+    path = 'D:/Humath-Curie-General/Humath-Curie-ECG/ecg_arritmias_sanos_corru70.json'
     signals = pd.read_json(path)
 
-    # un solo caso
-    signal1=signals.loc[1,'ECG_II'][0]
-    fiducial_points_R1, fiducial_points_nk1,signal_filtered1 = ecg_delineation(signal=signal1, fs=250)
-    nd1=normalized_fiducial2(fiducial_points_R1,250)
+    # Si solo quiero lo datos de arritmia
+    #signals = signals.drop(signals[signals['Arrhythmia'] == 0].index)
+    #signals=signals.reset_index(drop=True)
+
 
     # todas las señales
 
     fiducial_n_list=[]
     for person in range(len(signals)):
+
         try:
-            signal_person=signals.loc[person,'ECG_II'][0]
+            signal_person = signals.loc[person, 'ECG_II'][0]
+            signal_person = np.array(signal_person)
+            # Reemplazar los valores None por NaN
+            signal_person = np.where(signal_person == None, np.nan, signal_person)
+
             fiducial_points_R, fiducial_points_nk,signal_filtered = ecg_delineation(signal=signal_person, fs=250)
-            fiducial_points_n = normalized_fiducial2(fiducial_points_R,250)
+            fiducial_points_n = normalized_fiducial2(fiducial_points_R, 250)
 
             fiducial_n_list.append(fiducial_points_n)
-            print(person)
+            #print(person)
+
         except:
+            print(person)
             continue
 
-    flattened_fiducial_n=flattened_fp= flatten_values(fiducial_n_list)
-    flattened_dic=dict(flattened_fiducial_n)
+    flattened_fiducial_n = flatten_values(fiducial_n_list)
+    flattened_dic = dict(flattened_fiducial_n)
     df_flattened = pd.DataFrame(flattened_dic)
     df_flattened.to_csv('fiducial_normalized_arritmias.txt')
